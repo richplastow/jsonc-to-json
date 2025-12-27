@@ -1,0 +1,31 @@
+{
+  "name": "jsonc-to-json",
+  "version": "0.0.1",
+  "description": "Minimal transformer of JSONC to JSON, that strips comments and trailing commas",
+  "keywords": [
+    "jsonc",
+    "json"
+  ],
+  "homepage": "https://richplastow.com/jsonc-to-json/",
+  "bugs": {
+    "url": "https://github.com/richplastow/jsonc-to-json/issues"
+  },
+  "license": "MIT",
+  "author": "Rich Plastow",
+  "main": "./dist/jsonc-to-json.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/richplastow/jsonc-to-json.git"
+  },
+  "scripts": {
+    "build": "rollup -c && echo '\\xE2\\x9C\\x85 Build succeeded!'",
+    "check-types": "tsc --noEmit && echo '\\xE2\\x9C\\x85 No type-errors found!'",
+    "ok": "npm test && npm run check-types && npm run build",
+    "test": "node test.js && echo '\\xE2\\x9C\\x85 All tests passed!'"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "^24.8.1"
+  },
+  "type": "module"
+}

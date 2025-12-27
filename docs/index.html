@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>jsonc-to-json</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+    <h1>jsonc-to-json</h1>
+    <p>Minimal transformer of JSONC to JSON, that strips comments and trailing commas.</p>
+</header>
+<div id="input-output">
+<pre id="input" contenteditable>{
+    // Comments and trailing commas are not allowed in JSON files.
+    "key1": 1, // note the trailing comma after the value "TWO":
+    "key2": "TWO",
+}</pre><pre id="output"></pre>
+</div>
+
+<!-- If running on localhost or local network and path includes "/docs/", add
+     .w4-is-dev class to body, show #w4-dev-badge, and set W4.isDev to true. -->
+<script>!function($body, hostname){
+var W4 = window.W4 = window.W4 || {};
+var is = W4.isDev = (/^(?:192\.168|10\.)|\.local$/.test(hostname)
+    || (['::1', '', '127.0.0.1', 'localhost'].indexOf(hostname) > -1))
+    && location.pathname.indexOf('/docs/') > -1;
+$body.classList[is ? 'add' : 'remove']('w4-is-dev');
+if (is) $body.appendChild(document.createElement('div')).id = 'w4-dev-badge';
+}(document.body, location.hostname)</script>
+
+<script type="module">
+    const { jsoncToJson } = window.W4?.isDev
+        ? await import('../src/jsonc-to-json.js') // if dev mode, import src...
+        : await import('./jsonc-to-json.js'); // ...otherwise use build
+    
+    const $input = document.getElementById('input');
+    const $output = document.getElementById('output');
+
+    const updateOutput = () => {
+        try {
+            const json = jsoncToJson($input.innerText);
+            $output.innerText = json;
+        } catch (e) {
+            $output.innerText = `Error: ${e.message}`;
+        }
+    };
+
+    // When the page loads, and then every time the input changes, transform the
+    // input JSONC to the output JSON.
+    updateOutput();
+    $input.addEventListener('input', updateOutput);
+</script>
+</body>
+</html>

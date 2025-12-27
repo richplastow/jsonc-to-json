@@ -1,0 +1,143 @@
+:root {
+    color-scheme: light dark;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+body {
+    margin: 20px 16px;
+    line-height: 1.6;
+    color: CanvasText;
+    background: Canvas;
+}
+
+
+/* NAVIGATION BAR */
+
+/* Sticky top navigation bar. */
+nav {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: Canvas;
+    padding: 8px 0;
+    margin: 0 0 18px 0;
+}
+
+/* Horizontal list of buttons. */
+nav ul {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+/* Put the first item to the left, others to the right. */
+nav li:first-child {
+    margin-right: auto;
+}
+
+/* Common button look for links and the disabled span. */
+nav a,
+nav span {
+    display: inline-block;
+    padding: 5px 12px 6px;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    line-height: 1;
+    text-decoration: none;
+    background: ButtonFace;
+    color: ButtonText;
+    opacity: 0.85;
+    transition: opacity 0.3s;
+}
+
+/* Interactive link states. */
+nav a:hover {
+    opacity: 1;
+}
+nav a:focus {
+    outline: 2px solid Highlight;
+    outline-offset: 2px;
+}
+
+/* Make <span> look like a disabled button. */
+nav span {
+    opacity: 0.4;
+    pointer-events: none;
+    cursor: default;
+}
+
+
+/* LINKS */
+
+/* Default link styles using system colors. */
+main a {
+    color: LinkText;
+    text-decoration: none;
+    transition: opacity 0.3s;
+}
+
+/* Visited links. */
+main a:visited {
+    color: VisitedText;
+}
+
+/* Active (pressed) links. */
+main a:active {
+    color: ActiveText;
+}
+
+/* Optional hover effect that stays theme-aware. */
+main a:hover {
+    opacity: 0.8; /* subtle, doesn’t override color */
+}
+
+
+/* INPUT AND OUTPUT */
+
+#input-output {
+    display: flex;
+    gap: 16px;
+}
+
+pre, code {
+    font-family: ui-monospace, Menlo, Monaco, "Cascadia Mono", "Segoe UI Mono",
+        "Roboto Mono", "Oxygen Mono", "Ubuntu Mono", "Source Code Pro",
+        "Fira Mono", "Droid Sans Mono", Consolas, "Courier New", monospace;
+}
+
+pre {
+    width: calc(50vw - 52px);
+    height: 70vh;
+    border: 1px solid;
+    border-radius: 6px;
+    padding: 12px;
+    overflow: hidden;
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.2;
+}
+
+
+/* BADGE */
+
+#w4-dev-badge {
+    position: fixed;
+    bottom: 12px;
+    right: 12px;
+    padding: 1px 7px 3px 8px;
+    border-radius: 4px;
+    background: CanvasText;
+    color: Canvas;
+    opacity: 0.6;
+    z-index: 1001;
+}
+
+#w4-dev-badge::after {
+    font-weight: bold;
+    letter-spacing: 2px;
+    content: '</>';
+}
