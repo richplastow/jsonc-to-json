@@ -20,12 +20,24 @@
   "scripts": {
     "build": "rollup -c && echo '\\xE2\\x9C\\x85 Build succeeded!'",
     "check-types": "tsc --noEmit && echo '\\xE2\\x9C\\x85 No type-errors found!'",
-    "ok": "npm test && npm run check-types && npm run build",
-    "test": "node test.js && echo '\\xE2\\x9C\\x85 All tests passed!'"
+    "prebuild": "cd wasm/jsonc_to_json && wasm-pack build --target web --out-dir pkg && cd ../.. && node scripts/embed-wasm.js",
+    "ok": "npm run test:js && npm run check-types && npm run build && npm run test:wasm",
+    "test:js": "node test.js && echo '\\xE2\\x9C\\x85 All JS tests passed!'",
+    "test:wasm": "cd wasm/jsonc_to_json && cargo test --release && echo '\\xE2\\x9C\\x85 All WASM tests passed!'",
+    "test": "npm run test:js && npm run test:wasm"
   },
   "dependencies": {},
   "devDependencies": {
     "@types/node": "^24.8.1"
   },
+  "engines": {
+    "node": "24.8"
+  },
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "packageManager": "npm@10.9.2",
   "type": "module"
 }

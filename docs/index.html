@@ -11,6 +11,12 @@
     <h1>jsonc-to-json</h1>
     <p>Minimal transformer of JSONC to JSON, that strips comments and trailing commas.</p>
 </header>
+<section id="mode-controls">
+    <p>Execution mode:</p>
+    <label><input type="radio" name="wasm-mode" value="auto" checked> Auto (JS for small inputs, WASM for large ones)</label>
+    <label><input type="radio" name="wasm-mode" value="always"> Always use Rust WASM</label>
+    <label><input type="radio" name="wasm-mode" value="never"> Never use WASM (JavaScript only)</label>
+</section>
 <div id="input-output">
 <pre id="input" contenteditable>{
     // Comments and trailing commas are not allowed in JSON files.
@@ -37,10 +43,12 @@ if (is) $body.appendChild(document.createElement('div')).id = 'w4-dev-badge';
     
     const $input = document.getElementById('input');
     const $output = document.getElementById('output');
+    const $modeRadios = document.querySelectorAll('input[name="wasm-mode"]');
+    let wasmMode = 'auto';
 
     const updateOutput = () => {
         try {
-            const json = jsoncToJson($input.innerText);
+            const json = jsoncToJson($input.innerText, { useWasm: wasmMode });
             $output.innerText = json;
         } catch (e) {
             $output.innerText = `Error: ${e.message}`;
@@ -51,6 +59,12 @@ if (is) $body.appendChild(document.createElement('div')).id = 'w4-dev-badge';
     // input JSONC to the output JSON.
     updateOutput();
     $input.addEventListener('input', updateOutput);
+    $modeRadios.forEach((radio) => {
+        radio.addEventListener('change', (event) => {
+            wasmMode = event.target.value;
+            updateOutput();
+        });
+    });
 </script>
 </body>
 </html>

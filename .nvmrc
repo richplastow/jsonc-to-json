@@ -1,0 +1,5 @@
+# Specify Node 24.8.x when you `nvm install` or `nvm use`.
+
+# This is the LTS Node version, at the time this project was created.
+
+v24.8

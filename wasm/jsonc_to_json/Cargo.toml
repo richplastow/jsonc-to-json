@@ -1,0 +1,16 @@
+[package]
+name = "jsonc_to_json"
+version = "0.1.0"
+edition = "2021"
+description = "Rust implementation of the jsonc-to-json pipeline for both native and wasm targets"
+license = "MIT"
+repository = "git+https://github.com/richplastow/jsonc-to-json.git"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+wasm-bindgen = "0.2"
+
+[dev-dependencies]
+pretty_assertions = "1"

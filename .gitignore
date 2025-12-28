@@ -9,3 +9,7 @@ npm-debug.log*
 # Misc.
 .DS_Store
 *.pem
+
+# Rust/WASM build artifacts and cache.
+wasm/**/target/
+wasm/**/*.lock
