@@ -1,12 +1,19 @@
 {
     "cSpell.words": [
         "bindgen",
+        "Cascadia",
         "cdylib",
+        "Consolas",
+        "Fira",
+        "Neue",
         "pdksh",
         "Plastow",
+        "rgba",
         "rlib",
+        "Roboto",
         "rustc",
         "rustup",
+        "Segoe",
         "yansi"
     ]
 }

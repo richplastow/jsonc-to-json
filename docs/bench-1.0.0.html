@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Technical meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Search engine meta -->
+    <title>jsonc-to-json v1.0.0 — Node.js benchmarks</title>
+    <meta name="description"
+        content="Side-by-side comparison of the JavaScript and Rust/WASM
+        implementations in Node.js, for trivial, small, large and huge inputs.
+        Useful for checking performance differences between Node.js versions,
+        and different jsonc-to-json releases.">
+    <link rel="author" href="Rich Plastow">
+
+    <!-- Open Graph for social media bots, etc -->
+    <meta property="og:type"   content="website">
+    <meta property="og:locale" content="en_GB">
+    <meta property="og:url"
+        content="https://richplastow.com/jsonc-to-json/bench-1.0.0.html">
+    <meta property="og:image"
+        content="https://richplastow.com/asset/logo/rich-plastow-logo-1200.png">
+    <meta property="og:title" content="jsonc-to-json v1.0.0 — Node.js benchmarks">
+    <meta property="og:description"
+        content="Side-by-side comparison of the JavaScript and Rust/WASM
+        implementations in Node.js, for trivial, small, large and huge inputs.
+        Useful for checking performance differences between Node.js versions,
+        and different jsonc-to-json releases.">
+
+    <!-- From realfavicongenerator.net -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/asset/icon/apple-touch.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/asset/icon/favicon32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/asset/icon/favicon16.png">
+    <link rel="manifest" href="manifest.json">
+    <link rel="mask-icon" color="#222222" href="/asset/icon/safari-pinned-tab.svg">
+    <link rel="shortcut icon" href="/asset/icon/favicon.ico">
+    <meta name="apple-mobile-web-app-title" content="jsonc-to-json">
+    <meta name="application-name"           content="jsonc-to-json">
+    <meta name="msapplication-config"       content="/asset/icon/browserconfig.xml">
+    <meta name="theme-color"                content="#ffffff">
+</head>
+<body>
+<header>
+    <h1>jsonc-to-json v1.0.0 — Node.js benchmarks</h1>
+    <p>Generated 2025-12-28T10:23:09.457Z on Node v24.8.0.</p>
+    <p>Side-by-side comparison of the JavaScript and Rust/WASM implementations in
+        Node.js, for trivial, small, large and huge inputs. Useful for checking
+        performance differences between Node.js versions, and different
+        jsonc-to-json releases.
+    </p>
+    <p><a href="./index.html">Back to the live demo</a></p>
+    <p><a href="./bench.html">Run browser benchmarks</a></p>
+</header>
+<section>
+    <h2>Summary</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>Dataset</th>
+            <th>Input size</th>
+            <th>Iterations</th>
+            <th>JS avg (ms)</th>
+            <th>WASM avg (ms)</th>
+            <th>Winner</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>Trivial (single entry)</td>
+            <td>230 B (230 chars)</td>
+            <td>5,000</td>
+            <td>0.005</td>
+            <td>0.002</td>
+            <td>WASM (2.18× faster, Δ 0.003 ms)</td>
+        </tr>
+        <tr>
+            <td>Small (~15 KB payload)</td>
+            <td>33.90 KB (34,716 chars)</td>
+            <td>1,000</td>
+            <td>0.814</td>
+            <td>0.142</td>
+            <td>WASM (5.75× faster, Δ 0.673 ms)</td>
+        </tr>
+        <tr>
+            <td>Large (~150 KB payload)</td>
+            <td>348.16 KB (356,517 chars)</td>
+            <td>200</td>
+            <td>9.613</td>
+            <td>1.519</td>
+            <td>WASM (6.33× faster, Δ 8.094 ms)</td>
+        </tr>
+        <tr>
+            <td>Huge (~750 KB payload)</td>
+            <td>1.72 MB (1,804,518 chars)</td>
+            <td>40</td>
+            <td>49.34</td>
+            <td>7.675</td>
+            <td>WASM (6.43× faster, Δ 41.66 ms)</td>
+        </tr>
+        </tbody>
+    </table>
+</section>
+<section>
+    <h2>Details</h2>
+        <section>
+            <h3>Trivial (single entry)</h3>
+            <p>Input size: 230 B (230 characters). Iterations per mode: 5,000.</p>
+            <ul>
+                <li>JS pipeline — avg 0.005 ms (min 0.003 ms, max 0.475 ms)</li>
+                <li>WASM pipeline — avg 0.002 ms (min 0.001 ms, max 1.326 ms)</li>
+                <li>Winner: WASM (2.18× faster on average)</li>
+            </ul>
+        </section>
+        <section>
+            <h3>Small (~15 KB payload)</h3>
+            <p>Input size: 33.90 KB (34,716 characters). Iterations per mode: 1,000.</p>
+            <ul>
+                <li>JS pipeline — avg 0.814 ms (min 0.693 ms, max 3.354 ms)</li>
+                <li>WASM pipeline — avg 0.142 ms (min 0.137 ms, max 0.197 ms)</li>
+                <li>Winner: WASM (5.75× faster on average)</li>
+            </ul>
+        </section>
+        <section>
+            <h3>Large (~150 KB payload)</h3>
+            <p>Input size: 348.16 KB (356,517 characters). Iterations per mode: 200.</p>
+            <ul>
+                <li>JS pipeline — avg 9.613 ms (min 8.702 ms, max 12.68 ms)</li>
+                <li>WASM pipeline — avg 1.519 ms (min 1.473 ms, max 3.454 ms)</li>
+                <li>Winner: WASM (6.33× faster on average)</li>
+            </ul>
+        </section>
+        <section>
+            <h3>Huge (~750 KB payload)</h3>
+            <p>Input size: 1.72 MB (1,804,518 characters). Iterations per mode: 40.</p>
+            <ul>
+                <li>JS pipeline — avg 49.34 ms (min 46.70 ms, max 55.93 ms)</li>
+                <li>WASM pipeline — avg 7.675 ms (min 7.422 ms, max 8.239 ms)</li>
+                <li>Winner: WASM (6.43× faster on average)</li>
+            </ul>
+        </section>
+</section>
+</body>
+</html>

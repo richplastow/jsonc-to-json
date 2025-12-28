@@ -176,11 +176,15 @@ static-server --version
 # added 13 packages in 1s
 # static-server 2.2.1
 
-# Serve the docs/ folder to preview the live demo.
-static-server --no-cache docs
+# Serve the docs/ folder to preview the live demo, via npm.
+npm run preview
 # ...
 # * Serving files at: http://localhost:9080
 # * Press Ctrl+C to shutdown.
+
+# Or serve docs/ directly with static-server.
+static-server --no-cache docs
+# ...
 ```
 
 Visit <http://localhost:9080/> (without 'docs/') to check the live demo works.
@@ -220,26 +224,51 @@ node test.js
 # ...
 ```
 
-### Preflight, before each commit
+### Benchmark and preflight, before each commit
 
 ```bash
+# Run a preflight check, before committing code:
+# JS test - type check - JS and WASM build - WASM test.
 npm run ok
-# ...runs JS tests, checks types, rebuilds the bundle-file in docs/ and runs WASM tests.
 # ...
 # ✅ Build succeeded!
+
+# Run Node.js benchmarks, and save the report as an HTML file.
+npm run bench
+# ...
+# 📊 Benchmark report saved to docs/bench-1.2.3.html
 ```
+
+Benchmarking compares the JavaScript `{ useWasm: 'never' }` and Rust/WASM
+`{ useWasm: 'always' }` implementations across four datasets (trivial, small,
+large and huge). Each dataset is transformed multiple times per implementation,
+and the aggregated results are written to
+`docs/bench-<package-version>.html`, to help track performance across releases.
+
+`npm run bench` runs `npm run build` first, to ensure the embedded WASM bundle
+is up to date.
+
+Prefer a browser-side comparison? Then open <http://localhost:9080/bench.html>
+(after running `npm run preview`) to run the same benchmark suites in your
+current browser. That page is also available online at
+<https://richplastow.com/jsonc-to-json/bench.html>.
 
 ### Develop
 
 ```bash
-npm install --global static-server
-# added 1 package ...
+# Check that static-server is installed globally in nvm's current Node version.
 static-server --version
 # static-server 2.2.1
-static-server --no-cache .
+
+# Serve the top-level folder to use src/ code in the live demo.
+npm run dev
 # ...
 # * Serving files at: http://localhost:9080
 # * Press Ctrl+C to shutdown.
+
+# Or serve the top-level folder directly with static-server.
+static-server --no-cache .
+# ...
 ```
 
 Visit <http://localhost:9080/docs/> - there's no hot-reloading, so refresh the

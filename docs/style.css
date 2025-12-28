@@ -103,7 +103,7 @@ main a:hover {
     gap: 16px;
 }
 
-pre, code {
+pre, code, #status {
     font-family: ui-monospace, Menlo, Monaco, "Cascadia Mono", "Segoe UI Mono",
         "Roboto Mono", "Oxygen Mono", "Ubuntu Mono", "Source Code Pro",
         "Fira Mono", "Droid Sans Mono", Consolas, "Courier New", monospace;
@@ -140,4 +140,32 @@ pre {
     font-weight: bold;
     letter-spacing: 2px;
     content: '</>';
+}
+
+
+/* BENCHMARKS TABLE */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+}
+
+th, td {
+    border: 1px solid rgba(0,0,0,0.1);
+    padding: 0.5rem 0.75rem;
+    text-align: left;
+}
+
+th {
+    background: rgba(0,0,0,0.05);
+}
+
+tbody tr:nth-child(odd) {
+    background: rgba(0,0,0,0.015);
+}
+
+button[disabled] {
+    opacity: 0.6;
+    cursor: not-allowed;
 }

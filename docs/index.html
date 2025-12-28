@@ -1,18 +1,69 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <!-- Technical meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>jsonc-to-json</title>
+
+    <!-- CSS -->
     <link rel="stylesheet" href="style.css">
+
+    <!-- Search engine meta -->
+    <title>jsonc-to-json</title>
+    <meta name="description"
+        content="jsonc-to-json is a JavaScript library that transforms JSONC
+        (JSON with Comments) into standard JSON by stripping comments and
+        trailing commas.
+        It switches to a Rust and WebAssembly (WASM) backend for large inputs
+        (1000+ chars) to improve performance, while keeping a pure JavaScript
+        implementation for smaller inputs and environments where WASM is not
+        available.">
+    <link rel="author" href="Rich Plastow">
+
+    <!-- Open Graph for social media bots, etc -->
+    <meta property="og:type"   content="website">
+    <meta property="og:locale" content="en_GB">
+    <meta property="og:url"    content="https://richplastow.com/jsonc-to-json/">
+    <meta property="og:image"
+        content="https://richplastow.com/asset/logo/rich-plastow-logo-1200.png">
+    <meta property="og:title" content="jsonc-to-json">
+    <meta property="og:description"
+        content="jsonc-to-json is a JavaScript library that transforms JSONC
+        (JSON with Comments) into standard JSON by stripping comments and
+        trailing commas.
+        It switches to a Rust and WebAssembly (WASM) backend for large inputs
+        (1000+ chars) to improve performance, while keeping a pure JavaScript
+        implementation for smaller inputs and environments where WASM is not
+        available.">
+
+    <!-- From realfavicongenerator.net -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/asset/icon/apple-touch.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/asset/icon/favicon32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/asset/icon/favicon16.png">
+    <link rel="manifest" href="manifest.json">
+    <link rel="mask-icon" color="#222222" href="/asset/icon/safari-pinned-tab.svg">
+    <link rel="shortcut icon" href="/asset/icon/favicon.ico">
+    <meta name="apple-mobile-web-app-title" content="jsonc-to-json">
+    <meta name="application-name"           content="jsonc-to-json">
+    <meta name="msapplication-config"       content="/asset/icon/browserconfig.xml">
+    <meta name="theme-color"                content="#ffffff">
 </head>
 <body>
 <header>
     <h1>jsonc-to-json</h1>
-    <p>Minimal transformer of JSONC to JSON, that strips comments and trailing commas.</p>
+    <p>jsonc-to-json is a JavaScript library that transforms JSONC (JSON with
+        Comments) into standard JSON by stripping comments and trailing commas.
+    </p>
+    <p>It switches to a Rust and WebAssembly (WASM) backend for large inputs
+        (1000+ chars) to improve performance, while keeping a pure JavaScript
+        implementation for smaller inputs and environments where WASM is not
+        available.
+    </p>
+    <p><a href="./bench-1.0.0.html">Node.js benchmarks</a></p>
+    <p><a href="./bench.html">Run browser benchmarks</a></p>
 </header>
 <section id="mode-controls">
-    <p>Execution mode:</p>
     <label><input type="radio" name="wasm-mode" value="auto" checked> Auto (JS for small inputs, WASM for large ones)</label>
     <label><input type="radio" name="wasm-mode" value="always"> Always use Rust WASM</label>
     <label><input type="radio" name="wasm-mode" value="never"> Never use WASM (JavaScript only)</label>

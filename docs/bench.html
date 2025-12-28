@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Technical meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Search engine meta -->
+    <title>jsonc-to-json — browser benchmarks</title>
+    <meta name="description"
+        content="Runs a side-by-side comparison of the JavaScript and Rust/WASM
+        implementations in the current browser, for trivial, small, large and
+        huge inputs. Useful for exploring performance differences between real
+        browser engines, for different jsonc-to-json releases.">
+    <link rel="author" href="Rich Plastow">
+
+    <!-- Open Graph for social media bots, etc -->
+    <meta property="og:type"   content="website">
+    <meta property="og:locale" content="en_GB">
+    <meta property="og:url"
+        content="https://richplastow.com/jsonc-to-json/bench.html">
+    <meta property="og:image"
+        content="https://richplastow.com/asset/logo/rich-plastow-logo-1200.png">
+    <meta property="og:title" content="jsonc-to-json — browser benchmarks">
+    <meta property="og:description"
+        content="Runs a side-by-side comparison of the JavaScript and Rust/WASM
+        implementations in the current browser, for trivial, small, large and
+        huge inputs. Useful for exploring performance differences between real
+        browser engines, for different jsonc-to-json releases.">
+
+    <!-- From realfavicongenerator.net -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/asset/icon/apple-touch.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/asset/icon/favicon32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/asset/icon/favicon16.png">
+    <link rel="manifest"                  href="manifest.json">
+    <link rel="mask-icon" color="#222222" href="/asset/icon/safari-pinned-tab.svg">
+    <link rel="shortcut icon"             href="/asset/icon/favicon.ico">
+    <meta name="apple-mobile-web-app-title" content="jsonc-to-json">
+    <meta name="application-name"           content="jsonc-to-json">
+    <meta name="msapplication-config"       content="/asset/icon/browserconfig.xml">
+    <meta name="theme-color"                content="#ffffff">
+</head>
+<body>
+<header>
+    <h1>jsonc-to-json — browser benchmark</h1>
+    <p>Runs a side-by-side comparison of the JavaScript and Rust/WASM
+        implementations in the current browser, for trivial, small, large and
+        huge inputs. Useful for exploring performance differences between real
+        browser engines, for different jsonc-to-json releases.</p>
+    <p><a href="./index.html">Back to the live demo</a></p>
+    <p><a href="./bench-1.0.0.html">Node.js benchmarks</a></p>
+</header>
+<section id="controls">
+    <button id="run-bench">Run benchmarks</button>
+    <p id="status">Benchmarks have not been run yet.</p>
+</section>
+<section>
+    <h2>Summary</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>Dataset</th>
+            <th>Input size</th>
+            <th>Iterations</th>
+            <th>JS avg (ms)</th>
+            <th>WASM avg (ms)</th>
+            <th>Winner</th>
+        </tr>
+        </thead>
+        <tbody id="summary-body">
+        <tr><td colspan="6">Run the benchmarks to populate this table.</td></tr>
+        </tbody>
+    </table>
+</section>
+<section>
+    <h2>Details</h2>
+    <div id="details"></div>
+</section>
+
+<!-- Dev detection snippet reused from index.html. -->
+<script>!function($body, hostname){
+var W4 = window.W4 = window.W4 || {};
+var is = W4.isDev = (/^(?:192\.168|10\.)|\.local$/.test(hostname)
+    || (['::1', '', '127.0.0.1', 'localhost'].indexOf(hostname) > -1))
+    && location.pathname.indexOf('/docs/') > -1;
+$body.classList[is ? 'add' : 'remove']('w4-is-dev');
+if (is) $body.appendChild(document.createElement('div')).id = 'w4-dev-badge';
+}(document.body, location.hostname)</script>
+
+<script type="module">
+    const { jsoncToJson } = window.W4?.isDev
+        ? await import('../src/jsonc-to-json.js')
+        : await import('./jsonc-to-json.js');
+
+    const DATASETS = [
+        { id: 'trivial', label: 'Trivial (single entry)', entries: 1, iterations: 5000 },
+        { id: 'small', label: 'Small (~15 KB payload)', entries: 200, iterations: 1000 },
+        { id: 'large', label: 'Large (~150 KB payload)', entries: 2000, iterations: 200 },
+        { id: 'huge', label: 'Huge (~750 KB payload)', entries: 10000, iterations: 40 },
+    ];
+
+    const $runButton = document.getElementById('run-bench');
+    const $status = document.getElementById('status');
+    const $summaryBody = document.getElementById('summary-body');
+    const $details = document.getElementById('details');
+
+    $runButton.addEventListener('click', async () => {
+        $runButton.disabled = true;
+        $status.textContent = 'Initialising WASM...';
+        try {
+            await ensureWasmReady();
+            const results = [];
+            for (let i = 0; i < DATASETS.length; i += 1) {
+                const dataset = DATASETS[i];
+                $status.textContent = `Running ${dataset.label} (${i + 1}/${DATASETS.length})...`;
+                const result = await runBenchmark(dataset);
+                results.push(result);
+                renderSummary(results);
+                renderDetails(results);
+                await waitFrame();
+            }
+            $status.textContent = 'Benchmarks complete.';
+        } catch (error) {
+            console.error(error);
+            $status.textContent = `Benchmark failed: ${error instanceof Error ? error.message : String(error)}`;
+        } finally {
+            $runButton.disabled = false;
+        }
+    });
+
+    async function ensureWasmReady() {
+        try {
+            jsoncToJson('{"warmup": true, /* comment */ "value": 1,}', { useWasm: 'always' });
+        } catch (error) {
+            throw new Error('WASM backend is unavailable. Make sure docs/jsonc-to-json.js was rebuilt after running npm run prebuild.');
+        }
+    }
+
+    async function runBenchmark(dataset) {
+        const input = buildJsonc(dataset.entries);
+        const encoder = new TextEncoder();
+        const sizeBytes = encoder.encode(input).byteLength;
+        const sizeChars = input.length;
+        const js = await measurePipeline('js', input, dataset.iterations);
+        const wasm = await measurePipeline('wasm', input, dataset.iterations);
+        const winner = computeWinner(js.average, wasm.average);
+        return {
+            ...dataset,
+            inputSize: { bytes: sizeBytes, chars: sizeChars },
+            js,
+            wasm,
+            winner,
+        };
+    }
+
+    async function measurePipeline(mode, input, iterations) {
+        const options = mode === 'wasm' ? { useWasm: 'always' } : { useWasm: 'never' };
+        jsoncToJson(input, options);
+        const samples = [];
+        for (let i = 0; i < iterations; i += 1) {
+            const start = performance.now();
+            jsoncToJson(input, options);
+            samples.push(performance.now() - start);
+            if ((i + 1) % 200 === 0) {
+                await waitFrame();
+            }
+        }
+        return summarize(samples);
+    }
+
+    function summarize(samples) {
+        let total = 0;
+        let min = Number.POSITIVE_INFINITY;
+        let max = 0;
+        for (const value of samples) {
+            total += value;
+            if (value < min) min = value;
+            if (value > max) max = value;
+        }
+        const average = total / samples.length;
+        return { average, min, max, samples: samples.length };
+    }
+
+    function computeWinner(jsAvg, wasmAvg) {
+        const jsFaster = jsAvg <= wasmAvg;
+        const faster = jsFaster ? jsAvg : wasmAvg;
+        const slower = jsFaster ? wasmAvg : jsAvg;
+        const deltaMs = slower - faster;
+        const multiplier = faster > 0 ? slower / faster : Infinity;
+        return {
+            label: jsFaster ? 'JS' : 'WASM',
+            deltaMs,
+            multiplier,
+        };
+    }
+
+    function buildJsonc(entryCount) {
+        const lines = [
+            '{',
+            '  /* Synthetic JSONC payload generated for benchmarking. */',
+        ];
+        for (let i = 0; i < entryCount; i += 1) {
+            lines.push(`  // Entry ${i}`);
+            lines.push('  "block": {');
+            lines.push(`    "id": ${i}, // inline comment to strip`);
+            lines.push(`    "text": "Value ${i}",`);
+            lines.push('    "list": [');
+            lines.push(`      ${i},`);
+            lines.push(`      ${i + 1},`);
+            lines.push('    ],');
+            lines.push('    /* block comment to strip */');
+            lines.push('  },');
+        }
+        lines.push('}');
+        lines.push('');
+        return lines.join('\n');
+    }
+
+    function renderSummary(results) {
+        if (!results.length) {
+            $summaryBody.innerHTML = '<tr><td colspan="6">Run the benchmarks to populate this table.</td></tr>';
+            return;
+        }
+        $summaryBody.innerHTML = results.map((result) => {
+            const winner = `${result.winner.label} (${formatMultiplier(result.winner.multiplier)}× faster, Δ ${formatMs(result.winner.deltaMs)} ms)`;
+            return `<tr>
+                <td>${result.label}</td>
+                <td>${formatBytes(result.inputSize.bytes)} (${formatNumber(result.inputSize.chars)} chars)</td>
+                <td>${formatNumber(result.iterations)}</td>
+                <td>${formatMs(result.js.average)}</td>
+                <td>${formatMs(result.wasm.average)}</td>
+                <td>${winner}</td>
+            </tr>`;
+        }).join('\n');
+    }
+
+    function renderDetails(results) {
+        if (!results.length) {
+            $details.textContent = 'Run the benchmarks to view per-dataset stats.';
+            return;
+        }
+        $details.innerHTML = results.map((result) => `
+            <section>
+                <h3>${result.label}</h3>
+                <p>Input size: ${formatBytes(result.inputSize.bytes)} (${formatNumber(result.inputSize.chars)} characters). Iterations per mode: ${formatNumber(result.iterations)}.</p>
+                <ul>
+                    <li>JS pipeline — avg ${formatMs(result.js.average)} ms (min ${formatMs(result.js.min)} ms, max ${formatMs(result.js.max)} ms)</li>
+                    <li>WASM pipeline — avg ${formatMs(result.wasm.average)} ms (min ${formatMs(result.wasm.min)} ms, max ${formatMs(result.wasm.max)} ms)</li>
+                    <li>Winner: ${result.winner.label} (${formatMultiplier(result.winner.multiplier)}× faster on average)</li>
+                </ul>
+            </section>
+        `).join('\n');
+    }
+
+    function formatBytes(bytes) {
+        if (bytes >= 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
+        if (bytes >= 1024) return `${(bytes / 1024).toFixed(2)} KB`;
+        return `${bytes} B`;
+    }
+
+    function formatMs(value) {
+        if (!Number.isFinite(value)) return 'n/a';
+        return value >= 10 ? value.toFixed(2) : value.toFixed(3);
+    }
+
+    function formatNumber(value) {
+        return value.toLocaleString('en-US');
+    }
+
+    function formatMultiplier(value) {
+        if (!Number.isFinite(value)) return '∞';
+        return value.toFixed(2);
+    }
+
+    function waitFrame() {
+        return new Promise((resolve) => {
+            if (typeof requestAnimationFrame === 'function') {
+                requestAnimationFrame(() => resolve());
+            } else {
+                setTimeout(resolve, 0);
+            }
+        });
+    }
+</script>
+</body>
+</html>

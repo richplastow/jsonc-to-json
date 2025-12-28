@@ -1,6 +1,6 @@
 {
   "name": "jsonc-to-json",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Minimal transformer of JSONC to JSON, that strips comments and trailing commas",
   "keywords": [
     "jsonc",
@@ -18,10 +18,13 @@
     "url": "git+https://github.com/richplastow/jsonc-to-json.git"
   },
   "scripts": {
+    "bench": "npm run build && node scripts/benchmark.js",
     "build": "rollup -c && echo '\\xE2\\x9C\\x85 Build succeeded!'",
     "check-types": "tsc --noEmit && echo '\\xE2\\x9C\\x85 No type-errors found!'",
-    "prebuild": "cd wasm/jsonc_to_json && wasm-pack build --target web --out-dir pkg && cd ../.. && node scripts/embed-wasm.js",
+    "dev": "static-server --no-cache .",
     "ok": "npm run test:js && npm run check-types && npm run build && npm run test:wasm",
+    "prebuild": "cd wasm/jsonc_to_json && wasm-pack build --target web --out-dir pkg && cd ../.. && node scripts/embed-wasm.js",
+    "preview": "static-server --no-cache docs",
     "test:js": "node test.js && echo '\\xE2\\x9C\\x85 All JS tests passed!'",
     "test:wasm": "cd wasm/jsonc_to_json && cargo test --release && echo '\\xE2\\x9C\\x85 All WASM tests passed!'",
     "test": "npm run test:js && npm run test:wasm"
