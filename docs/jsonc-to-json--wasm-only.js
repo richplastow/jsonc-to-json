@@ -1,4 +1,219 @@
-export const wasmBase64 = 'AGFzbQEAAAABYA5gAn9/AX9gA39/fwF/YAJ/fwBgAAJ/f2ADf39/AGABfwBgAn9/An9/YAV/f39/fwF/YAR/f39/AX9gAABgAX8Bf2AFf39/f38AYAt/f39/f39/f39/fwF/YAR/f39/AAInAQN3YmcfX193YmluZGdlbl9pbml0X2V4dGVybnJlZl90YWJsZQAJA0RD'
+#!/usr/bin/env node
+/**
+ * @fileoverview
+ * WASM-only build of jsonc-to-json.
+ * 
+ * Minimal transformer of JSONC to JSON — strips comments and trailing commas.
+ * 
+ * - Version: 1.1.0
+ * - License: MIT
+ * - GitHub: <https://github.com/richplastow/jsonc-to-json>
+ * - Live demo: <https://richplastow.com/jsonc-to-json/>
+ */
+
+let wasm;
+
+function getStringFromWasm0(ptr, len) {
+    ptr = ptr >>> 0;
+    return decodeText(ptr, len);
+}
+
+let cachedUint8ArrayMemory0 = null;
+function getUint8ArrayMemory0() {
+    if (cachedUint8ArrayMemory0 === null || cachedUint8ArrayMemory0.byteLength === 0) {
+        cachedUint8ArrayMemory0 = new Uint8Array(wasm.memory.buffer);
+    }
+    return cachedUint8ArrayMemory0;
+}
+
+function passStringToWasm0(arg, malloc, realloc) {
+    if (realloc === undefined) {
+        const buf = cachedTextEncoder.encode(arg);
+        const ptr = malloc(buf.length, 1) >>> 0;
+        getUint8ArrayMemory0().subarray(ptr, ptr + buf.length).set(buf);
+        WASM_VECTOR_LEN = buf.length;
+        return ptr;
+    }
+
+    let len = arg.length;
+    let ptr = malloc(len, 1) >>> 0;
+
+    const mem = getUint8ArrayMemory0();
+
+    let offset = 0;
+
+    for (; offset < len; offset++) {
+        const code = arg.charCodeAt(offset);
+        if (code > 0x7F) break;
+        mem[ptr + offset] = code;
+    }
+    if (offset !== len) {
+        if (offset !== 0) {
+            arg = arg.slice(offset);
+        }
+        ptr = realloc(ptr, len, len = offset + arg.length * 3, 1) >>> 0;
+        const view = getUint8ArrayMemory0().subarray(ptr + offset, ptr + len);
+        const ret = cachedTextEncoder.encodeInto(arg, view);
+
+        offset += ret.written;
+        ptr = realloc(ptr, len, offset, 1) >>> 0;
+    }
+
+    WASM_VECTOR_LEN = offset;
+    return ptr;
+}
+
+let cachedTextDecoder = new TextDecoder('utf-8', { ignoreBOM: true, fatal: true });
+cachedTextDecoder.decode();
+const MAX_SAFARI_DECODE_BYTES = 2146435072;
+let numBytesDecoded = 0;
+function decodeText(ptr, len) {
+    numBytesDecoded += len;
+    if (numBytesDecoded >= MAX_SAFARI_DECODE_BYTES) {
+        cachedTextDecoder = new TextDecoder('utf-8', { ignoreBOM: true, fatal: true });
+        cachedTextDecoder.decode();
+        numBytesDecoded = len;
+    }
+    return cachedTextDecoder.decode(getUint8ArrayMemory0().subarray(ptr, ptr + len));
+}
+
+const cachedTextEncoder = new TextEncoder();
+
+if (!('encodeInto' in cachedTextEncoder)) {
+    cachedTextEncoder.encodeInto = function (arg, view) {
+        const buf = cachedTextEncoder.encode(arg);
+        view.set(buf);
+        return {
+            read: arg.length,
+            written: buf.length
+        };
+    };
+}
+
+let WASM_VECTOR_LEN = 0;
+
+/**
+ * @param {string} input
+ * @returns {string}
+ */
+function jsonc_to_json(input) {
+    let deferred2_0;
+    let deferred2_1;
+    try {
+        const ptr0 = passStringToWasm0(input, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ret = wasm.jsonc_to_json(ptr0, len0);
+        deferred2_0 = ret[0];
+        deferred2_1 = ret[1];
+        return getStringFromWasm0(ret[0], ret[1]);
+    } finally {
+        wasm.__wbindgen_free(deferred2_0, deferred2_1, 1);
+    }
+}
+
+/**
+ * @param {string} input
+ * @returns {string}
+ */
+function remove_blank_lines(input) {
+    let deferred2_0;
+    let deferred2_1;
+    try {
+        const ptr0 = passStringToWasm0(input, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ret = wasm.remove_blank_lines(ptr0, len0);
+        deferred2_0 = ret[0];
+        deferred2_1 = ret[1];
+        return getStringFromWasm0(ret[0], ret[1]);
+    } finally {
+        wasm.__wbindgen_free(deferred2_0, deferred2_1, 1);
+    }
+}
+
+/**
+ * @param {string} input
+ * @returns {string}
+ */
+function remove_trailing_commas(input) {
+    let deferred2_0;
+    let deferred2_1;
+    try {
+        const ptr0 = passStringToWasm0(input, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ret = wasm.remove_trailing_commas(ptr0, len0);
+        deferred2_0 = ret[0];
+        deferred2_1 = ret[1];
+        return getStringFromWasm0(ret[0], ret[1]);
+    } finally {
+        wasm.__wbindgen_free(deferred2_0, deferred2_1, 1);
+    }
+}
+
+/**
+ * @param {string} input
+ * @returns {string}
+ */
+function strip_comments(input) {
+    let deferred2_0;
+    let deferred2_1;
+    try {
+        const ptr0 = passStringToWasm0(input, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ret = wasm.strip_comments(ptr0, len0);
+        deferred2_0 = ret[0];
+        deferred2_1 = ret[1];
+        return getStringFromWasm0(ret[0], ret[1]);
+    } finally {
+        wasm.__wbindgen_free(deferred2_0, deferred2_1, 1);
+    }
+}
+
+function __wbg_get_imports() {
+    const imports = {};
+    imports.wbg = {};
+    imports.wbg.__wbindgen_init_externref_table = function() {
+        const table = wasm.__wbindgen_externrefs;
+        const offset = table.grow(4);
+        table.set(0, undefined);
+        table.set(offset + 0, undefined);
+        table.set(offset + 1, null);
+        table.set(offset + 2, true);
+        table.set(offset + 3, false);
+    };
+
+    return imports;
+}
+
+function __wbg_finalize_init(instance, module) {
+    wasm = instance.exports;
+    cachedUint8ArrayMemory0 = null;
+
+
+    wasm.__wbindgen_start();
+    return wasm;
+}
+
+function initSync(module) {
+    if (wasm !== undefined) return wasm;
+
+
+    if (typeof module !== 'undefined') {
+        if (Object.getPrototypeOf(module) === Object.prototype) {
+            ({module} = module);
+        } else {
+            console.warn('using deprecated parameters for `initSync()`; pass a single object instead');
+        }
+    }
+
+    const imports = __wbg_get_imports();
+    if (!(module instanceof WebAssembly.Module)) {
+        module = new WebAssembly.Module(module);
+    }
+    const instance = new WebAssembly.Instance(module, imports);
+    return __wbg_finalize_init(instance);
+}
+
+const wasmBase64 = 'AGFzbQEAAAABYA5gAn9/AX9gA39/fwF/YAJ/fwBgAAJ/f2ADf39/AGABfwBgAn9/An9/YAV/f39/fwF/YAR/f39/AX9gAABgAX8Bf2AFf39/f38AYAt/f39/f39/f39/fwF/YAR/f39/AAInAQN3YmcfX193YmluZGdlbl9pbml0X2V4dGVybnJlZl90YWJsZQAJA0RD'
   + 'CgQABAcFBAQBAQECAAICAAcAAgsCDAQEAA0AAgUAAQAAAAICAAcAAAIGBgYGCAUFAgICAAQBAAgAAgACAAACAgAAAgQJAnABICBvAIABBQMBABEGCQF/AUGAgMAACwe/AQoGbWVtb3J5AgANanNvbmNfdG9fanNvbgAtEnJlbW92ZV9ibGFua19saW5lcwAsFnJlbW92'
   + 'ZV90cmFpbGluZ19jb21tYXMAKg5zdHJpcF9jb21tZW50cwArFV9fd2JpbmRnZW5fZXh0ZXJucmVmcwEBEV9fd2JpbmRnZW5fbWFsbG9jACgSX193YmluZGdlbl9yZWFsbG9jAC4PX193YmluZGdlbl9mcmVlADUQX193YmluZGdlbl9zdGFydAAACSUBAEEBCx8wIiUn'
   + 'HjAbIRwQMB8SPjkjOj8vGRMVQzIxQjc7CiBBDAEECtKoAUPJJQIJfwF+IwBBEGsiCCQAAkACQAJAAkACQCAAQfUBTwRAIABBzP97SwRAQQAhAAwGCyAAQQtqIgJBeHEhBUH8kMAAKAIAIglFDQRBHyEGQQAgBWshAyAAQfT//wdNBEAgBUEmIAJBCHZnIgBrdkEBcSAA'
@@ -158,3 +373,139 @@ export const wasmBase64 = 'AGFzbQEAAAABYA5gAn9/AX9gA39/fwF/YAJ/fwBgAAJ/f2ADf39/A
   + 'AQEBAQEBAQEBAQEBAQEBAQEBAEGPjMAACzMCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDAwMDAwMDAwMDAwMDAwMDBAQEBAQAQdCMwAALcAEAAAAAAAAAQwUQAAIAAABpbmRleCBvdXQgb2YgYm91bmRzOiB0aGUgbGVuIGlzICBidXQgdGhlIGluZGV4IGlz'
   + 'IAAAYAYQACAAAACABhAAEgAAAFJlZkNlbGwgYWxyZWFkeSBib3Jyb3dlZCAgICAAQciNwAALAQQAcAlwcm9kdWNlcnMCCGxhbmd1YWdlAQRSdXN0AAxwcm9jZXNzZWQtYnkDBXJ1c3RjHTEuOTIuMCAoZGVkNWMwNmNmIDIwMjUtMTItMDgpBndhbHJ1cwYwLjI0LjQM'
   + 'd2FzbS1iaW5kZ2VuBzAuMi4xMDYAaw90YXJnZXRfZmVhdHVyZXMGKw9tdXRhYmxlLWdsb2JhbHMrE25vbnRyYXBwaW5nLWZwdG9pbnQrC2J1bGstbWVtb3J5KwhzaWduLWV4dCsPcmVmZXJlbmNlLXR5cGVzKwptdWx0aXZhbHVl';
+
+let wasmReady = false;
+let wasmError = null;
+let cachedBytes = null;
+
+const decodeWasm = () => {
+  if (cachedBytes) {
+    return cachedBytes;
+  }
+  if (typeof Buffer === 'function') {
+    cachedBytes = Uint8Array.from(Buffer.from(wasmBase64, 'base64'));
+    return cachedBytes;
+  }
+  const binaryString = typeof atob === 'function'
+    ? atob(wasmBase64)
+    : globalThis.atob(wasmBase64);
+  const bytes = new Uint8Array(binaryString.length);
+  for (let i = 0; i < binaryString.length; i += 1) {
+    bytes[i] = binaryString.charCodeAt(i);
+  }
+  cachedBytes = bytes;
+  return cachedBytes;
+};
+
+const ensureWasm = () => {
+  if (wasmReady || wasmError) {
+    return wasmReady;
+  }
+  try {
+    const bytes = decodeWasm();
+    initSync({ module: bytes });
+    wasmReady = true;
+    return true;
+  } catch (error) {
+    wasmError = error;
+    return false;
+  }
+};
+
+/**
+ * Returns wasm bindings if instantiation succeeded. Otherwise `null` is
+ * returned so callers can gracefully fall back to the JS implementation.
+ * @returns {{
+ *   jsoncToJson: (input: string) => string,
+ *   stripComments: (input: string) => string,
+ *   removeTrailingCommas: (input: string) => string,
+ *   removeBlankLines: (input: string) => string,
+ * } | null}
+ */
+const getWasmApi = () => {
+  if (!ensureWasm()) {
+    return null;
+  }
+  return {
+    jsoncToJson: jsonc_to_json,
+    stripComments: strip_comments,
+    removeTrailingCommas: remove_trailing_commas,
+    removeBlankLines: remove_blank_lines,
+  };
+};
+
+const BUILD_VARIANT = 'wasm-only'; // may have ".min" appended during build
+const PACKAGE_VERSION = '1.1.0'; // will be checked during build
+
+/**
+ * @typedef {Object} JsoncToJsonOptions
+ * @property {boolean} [debug] - Optional debug flag, false by default
+ * @property {'always'|'auto'|'never'} [useWasm] - Ignored in WASM-only build
+ */
+
+/**
+ * @typedef {Object} JsoncToJsonDebugOutput
+ * @property {string} buildVariant - The build variant used, e.g. 'js-only.min'
+ * @property {'js'|'wasm'} implementationUsed - Whether JavaScript or WASM was used to process this JSON output
+ * @property {string} json - The JSON output, with comments and trailing commas removed
+ * @property {number} lengthInput - The length of the input JSONC string
+ * @property {number} lengthOutput - The length of the output JSON string
+ * @property {string} processingTimeMs - Time taken to process the input, in milliseconds, to 3 fixed decimal places
+ * @property {string} version - The jsonc-to-json package version
+ */
+
+/**
+ * Transforms JSONC (JSON with comments) into JSON by stripping comments,
+ * removing trailing commas, and collapsing blank lines.
+ * This is the WASM-only build - always uses the Rust/WASM backend.
+ * @param {string} jsoncString
+ * @param {JsoncToJsonOptions} [options]
+ * @returns {string|JsoncToJsonDebugOutput}
+ */
+const jsoncToJson = (jsoncString, options = {}) => {
+    let startTime;
+    if (options.debug) startTime = performance.now();
+
+    const wasm = getWasmApi();
+    if (!wasm) throw new Error(
+        'WASM-only build: Rust WASM backend failed to initialize. Rebuild the WASM package.');
+
+    const json = wasm.jsoncToJson(jsoncString);
+
+    // Usually, return just the JSON output.
+    if (!options.debug) return json;
+
+    // In debug mode, return runtime info along with the JSON output.
+    const processingTimeMs = performance.now() - startTime;
+    return {
+        buildVariant: BUILD_VARIANT,
+        implementationUsed: 'wasm',
+        json,
+        lengthInput: jsoncString.length,
+        lengthOutput: json.length,
+        processingTimeMs: processingTimeMs.toFixed(3),
+        version: PACKAGE_VERSION,
+    };
+};
+
+// CLI functionality - check if this module is being run from the command line.
+if (typeof process === 'object' && Array.isArray(process.argv)) {
+    const [, executablePath, jsoncPath] = process.argv;
+    if (executablePath && executablePath.endsWith('jsonc-to-json--wasm-only.js')) {
+        if (jsoncPath) { // process the argument as a JSONC string
+            const jsonContent = jsoncToJson(jsoncPath);
+            console.log(jsonContent);
+        } else { // read from stdin
+            let input = '';
+            process.stdin.on('data', (chunk) => {
+                input += chunk;
+            });
+            process.stdin.on('end', () => {
+                const jsonContent = jsoncToJson(input);
+                console.log(jsonContent);
+            });
+        }
+    }
+}
+
+export { jsoncToJson };

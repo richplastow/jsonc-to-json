@@ -1,6 +1,6 @@
 [package]
 name = "jsonc_to_json"
-version = "1.0.0"
+version = "1.1.0"
 edition = "2021"
 description = "Rust implementation of the jsonc-to-json pipeline for both native and wasm targets"
 license = "MIT"

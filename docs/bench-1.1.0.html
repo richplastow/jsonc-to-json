@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="style.css">
 
     <!-- Search engine meta -->
-    <title>jsonc-to-json v1.0.0 — Node.js benchmarks</title>
+    <title>jsonc-to-json v1.1.0 — Node.js benchmarks</title>
     <meta name="description"
         content="Side-by-side comparison of the JavaScript and Rust/WASM
         implementations in Node.js, for trivial, small, large and huge inputs.
@@ -22,10 +22,10 @@
     <meta property="og:type"   content="website">
     <meta property="og:locale" content="en_GB">
     <meta property="og:url"
-        content="https://richplastow.com/jsonc-to-json/bench-1.0.0.html">
+        content="https://richplastow.com/jsonc-to-json/bench-1.1.0.html">
     <meta property="og:image"
         content="https://richplastow.com/asset/logo/rich-plastow-logo-1200.png">
-    <meta property="og:title" content="jsonc-to-json v1.0.0 — Node.js benchmarks">
+    <meta property="og:title" content="jsonc-to-json v1.1.0 — Node.js benchmarks">
     <meta property="og:description"
         content="Side-by-side comparison of the JavaScript and Rust/WASM
         implementations in Node.js, for trivial, small, large and huge inputs.
@@ -46,15 +46,15 @@
 </head>
 <body>
 <header>
-    <h1>jsonc-to-json v1.0.0 — Node.js benchmarks</h1>
-    <p>Generated 2025-12-28T10:23:09.457Z on Node v24.8.0.</p>
+    <h1>jsonc-to-json v1.1.0 — Node.js benchmarks</h1>
+    <p>Generated 2025-12-28T12:37:33.513Z on Node v24.8.0.</p>
     <p>Side-by-side comparison of the JavaScript and Rust/WASM implementations in
         Node.js, for trivial, small, large and huge inputs. Useful for checking
         performance differences between Node.js versions, and different
         jsonc-to-json releases.
     </p>
     <p><a href="./index.html">Back to the live demo</a></p>
-    <p><a href="./bench-1.1.0.html">Latest Node.js benchmarks</a></p>
+    <p><a href="./bench-1.0.0.html">Previous Node.js benchmarks</a></p>
     <p><a href="./bench.html">Run browser benchmarks</a></p>
 </header>
 <section>
@@ -77,31 +77,31 @@
             <td>5,000</td>
             <td>0.005</td>
             <td>0.002</td>
-            <td>WASM (2.18× faster, Δ 0.003 ms)</td>
+            <td>WASM (2.34× faster, Δ 0.003 ms)</td>
         </tr>
         <tr>
             <td>Small (~15 KB payload)</td>
             <td>33.90 KB (34,716 chars)</td>
             <td>1,000</td>
-            <td>0.814</td>
-            <td>0.142</td>
-            <td>WASM (5.75× faster, Δ 0.673 ms)</td>
+            <td>0.796</td>
+            <td>0.152</td>
+            <td>WASM (5.23× faster, Δ 0.644 ms)</td>
         </tr>
         <tr>
             <td>Large (~150 KB payload)</td>
             <td>348.16 KB (356,517 chars)</td>
             <td>200</td>
-            <td>9.613</td>
-            <td>1.519</td>
-            <td>WASM (6.33× faster, Δ 8.094 ms)</td>
+            <td>9.750</td>
+            <td>1.553</td>
+            <td>WASM (6.28× faster, Δ 8.197 ms)</td>
         </tr>
         <tr>
             <td>Huge (~750 KB payload)</td>
             <td>1.72 MB (1,804,518 chars)</td>
             <td>40</td>
-            <td>49.34</td>
-            <td>7.675</td>
-            <td>WASM (6.43× faster, Δ 41.66 ms)</td>
+            <td>51.69</td>
+            <td>8.241</td>
+            <td>WASM (6.27× faster, Δ 43.45 ms)</td>
         </tr>
         </tbody>
     </table>
@@ -112,36 +112,36 @@
             <h3>Trivial (single entry)</h3>
             <p>Input size: 230 B (230 characters). Iterations per mode: 5,000.</p>
             <ul>
-                <li>JS pipeline — avg 0.005 ms (min 0.003 ms, max 0.475 ms)</li>
-                <li>WASM pipeline — avg 0.002 ms (min 0.001 ms, max 1.326 ms)</li>
-                <li>Winner: WASM (2.18× faster on average)</li>
+                <li>JS pipeline — avg 0.005 ms (min 0.004 ms, max 0.287 ms)</li>
+                <li>WASM pipeline — avg 0.002 ms (min 0.001 ms, max 0.695 ms)</li>
+                <li>Winner: WASM (2.34× faster on average)</li>
             </ul>
         </section>
         <section>
             <h3>Small (~15 KB payload)</h3>
             <p>Input size: 33.90 KB (34,716 characters). Iterations per mode: 1,000.</p>
             <ul>
-                <li>JS pipeline — avg 0.814 ms (min 0.693 ms, max 3.354 ms)</li>
-                <li>WASM pipeline — avg 0.142 ms (min 0.137 ms, max 0.197 ms)</li>
-                <li>Winner: WASM (5.75× faster on average)</li>
+                <li>JS pipeline — avg 0.796 ms (min 0.713 ms, max 1.299 ms)</li>
+                <li>WASM pipeline — avg 0.152 ms (min 0.141 ms, max 0.229 ms)</li>
+                <li>Winner: WASM (5.23× faster on average)</li>
             </ul>
         </section>
         <section>
             <h3>Large (~150 KB payload)</h3>
             <p>Input size: 348.16 KB (356,517 characters). Iterations per mode: 200.</p>
             <ul>
-                <li>JS pipeline — avg 9.613 ms (min 8.702 ms, max 12.68 ms)</li>
-                <li>WASM pipeline — avg 1.519 ms (min 1.473 ms, max 3.454 ms)</li>
-                <li>Winner: WASM (6.33× faster on average)</li>
+                <li>JS pipeline — avg 9.750 ms (min 8.937 ms, max 20.93 ms)</li>
+                <li>WASM pipeline — avg 1.553 ms (min 1.463 ms, max 2.570 ms)</li>
+                <li>Winner: WASM (6.28× faster on average)</li>
             </ul>
         </section>
         <section>
             <h3>Huge (~750 KB payload)</h3>
             <p>Input size: 1.72 MB (1,804,518 characters). Iterations per mode: 40.</p>
             <ul>
-                <li>JS pipeline — avg 49.34 ms (min 46.70 ms, max 55.93 ms)</li>
-                <li>WASM pipeline — avg 7.675 ms (min 7.422 ms, max 8.239 ms)</li>
-                <li>Winner: WASM (6.43× faster on average)</li>
+                <li>JS pipeline — avg 51.69 ms (min 48.86 ms, max 70.69 ms)</li>
+                <li>WASM pipeline — avg 8.241 ms (min 7.594 ms, max 16.79 ms)</li>
+                <li>Winner: WASM (6.27× faster on average)</li>
             </ul>
         </section>
 </section>

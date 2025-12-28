@@ -1,7 +1,7 @@
 {
   "name": "jsonc-to-json",
-  "version": "1.0.0",
-  "description": "Minimal transformer of JSONC to JSON, that strips comments and trailing commas",
+  "version": "1.1.0",
+  "description": "Minimal transformer of JSONC to JSON — strips comments and trailing commas.",
   "keywords": [
     "jsonc",
     "json"
@@ -12,25 +12,27 @@
   },
   "license": "MIT",
   "author": "Rich Plastow",
-  "main": "./dist/jsonc-to-json.js",
+  "main": "./dist/jsonc-to-json--js-and-wasm.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/richplastow/jsonc-to-json.git"
   },
   "scripts": {
     "bench": "npm run build && node scripts/benchmark.js",
+    "prebuild": "cd wasm/jsonc_to_json && wasm-pack build --target web --out-dir pkg && cd ../.. && node scripts/embed-wasm.js",
     "build": "rollup -c && echo '\\xE2\\x9C\\x85 Build succeeded!'",
+    "postbuild": " cp dist/* docs/ && echo '\\xE2\\x9C\\x85 Copied builds to docs/ for GitHub Pages!'",
     "check-types": "tsc --noEmit && echo '\\xE2\\x9C\\x85 No type-errors found!'",
+    "clean": "rm -rf dist docs/jsonc-to-json--*.js wasm/jsonc_to_json/{pkg,target,Cargo.lock}",
     "dev": "static-server --no-cache .",
     "ok": "npm run test:js && npm run check-types && npm run build && npm run test:wasm",
-    "prebuild": "cd wasm/jsonc_to_json && wasm-pack build --target web --out-dir pkg && cd ../.. && node scripts/embed-wasm.js",
     "preview": "static-server --no-cache docs",
     "test:js": "node test.js && echo '\\xE2\\x9C\\x85 All JS tests passed!'",
     "test:wasm": "cd wasm/jsonc_to_json && cargo test --release && echo '\\xE2\\x9C\\x85 All WASM tests passed!'",
     "test": "npm run test:js && npm run test:wasm"
   },
-  "dependencies": {},
   "devDependencies": {
+    "@rollup/plugin-terser": "^0.4.4",
     "@types/node": "^24.8.1"
   },
   "engines": {

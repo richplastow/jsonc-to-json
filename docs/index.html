@@ -8,9 +8,18 @@
 
     <!-- CSS -->
     <link rel="stylesheet" href="style.css">
+    <style>
+        #mode-controls label:has(input:disabled) {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        #mode-controls input:disabled {
+            cursor: not-allowed;
+        }
+    </style>
 
     <!-- Search engine meta -->
-    <title>jsonc-to-json</title>
+    <title>jsonc-to-json v1.1.0</title>
     <meta name="description"
         content="jsonc-to-json is a JavaScript library that transforms JSONC
         (JSON with Comments) into standard JSON by stripping comments and
@@ -27,7 +36,7 @@
     <meta property="og:url"    content="https://richplastow.com/jsonc-to-json/">
     <meta property="og:image"
         content="https://richplastow.com/asset/logo/rich-plastow-logo-1200.png">
-    <meta property="og:title" content="jsonc-to-json">
+    <meta property="og:title" content="jsonc-to-json v1.1.0">
     <meta property="og:description"
         content="jsonc-to-json is a JavaScript library that transforms JSONC
         (JSON with Comments) into standard JSON by stripping comments and
@@ -51,7 +60,7 @@
 </head>
 <body>
 <header>
-    <h1>jsonc-to-json</h1>
+    <h1>jsonc-to-json v1.1.0</h1>
     <p>jsonc-to-json is a JavaScript library that transforms JSONC (JSON with
         Comments) into standard JSON by stripping comments and trailing commas.
     </p>
@@ -60,13 +69,35 @@
         implementation for smaller inputs and environments where WASM is not
         available.
     </p>
-    <p><a href="./bench-1.0.0.html">Node.js benchmarks</a></p>
+    <p><a href="./bench-1.1.0.html">Latest Node.js benchmarks</a></p>
     <p><a href="./bench.html">Run browser benchmarks</a></p>
 </header>
 <section id="mode-controls">
-    <label><input type="radio" name="wasm-mode" value="auto" checked> Auto (JS for small inputs, WASM for large ones)</label>
-    <label><input type="radio" name="wasm-mode" value="always"> Always use Rust WASM</label>
-    <label><input type="radio" name="wasm-mode" value="never"> Never use WASM (JavaScript only)</label>
+    <p>Debug:</p>
+    <label><input type="radio" name="debug" value="yes" checked> Yes</label>
+    <label><input type="radio" name="debug" value="no"> No</label>
+    <p>Build variant:</p>
+    <label><input type="radio" name="build-variant" value="js-and-wasm" checked> JS and WASM (adaptive)</label>
+    <label><input type="radio" name="build-variant" value="js-only"> JS only</label>
+    <label><input type="radio" name="build-variant" value="wasm-only"> WASM only</label>
+    <label><input type="radio" name="build-variant" value="js-and-wasm-min" checked> JS and WASM minified</label>
+    <label><input type="radio" name="build-variant" value="js-only-min"> JS only minified</label>
+    <label><input type="radio" name="build-variant" value="wasm-only-min"> WASM only minified</label>
+    <p id="useWasm-controls-label">Execution mode (JS-and-WASM build only):</p>
+    <label id="useWasm-auto"><input type="radio" name="wasm-mode" value="auto" checked> Auto (JS for small inputs, WASM for large ones)</label>
+    <label id="useWasm-always"><input type="radio" name="wasm-mode" value="always"> Always use Rust WASM</label>
+    <label id="useWasm-never"><input type="radio" name="wasm-mode" value="never"> Never use WASM (JavaScript only)</label>
+</section>
+<section id="presets">
+    <p>Presets:</p>
+    <button data-preset="default">Default</button>
+    <button data-preset="minimal">Minimal</button>
+    <button data-preset="maximal">Maximal</button>
+    <button data-preset="minified">Minified</button>
+    <button data-preset="pretty-array">Pretty Array</button>
+    <button data-preset="schema">Schema</button>
+    <button data-preset="commented-out">Commented-out</button>
+    <button data-preset="already-json">Already JSON</button>
 </section>
 <div id="input-output">
 <pre id="input" contenteditable>{
@@ -88,19 +119,347 @@ if (is) $body.appendChild(document.createElement('div')).id = 'w4-dev-badge';
 }(document.body, location.hostname)</script>
 
 <script type="module">
-    const { jsoncToJson } = window.W4?.isDev
-        ? await import('../src/jsonc-to-json.js') // if dev mode, import src...
-        : await import('./jsonc-to-json.js'); // ...otherwise use build
-    
+    // Preset JSONC examples
+    const presets = {
+        'default': `{
+    // Comments and trailing commas are not allowed in JSON files.
+    "key1": 1, // note the trailing comma after the value "TWO":
+    "key2": "TWO",
+}`,
+        'minimal': `/* This is a minimal JSONC example */
+null`,
+        'maximal': `{
+  /* Synthetic JSONC payload for testing and benchmarking. */
+  // This demonstrates various JSONC features across ~5000 characters.
+  "metadata": {
+    "version": "1.0.0", // Current version
+    "author": "Example Author",
+    "description": "A comprehensive JSONC example with comments and trailing commas",
+    /* Creation timestamp */
+    "created": "2025-12-29T00:00:00Z",
+  },
+  "entries": [
+    // Entry 0
+    {
+      "id": 0, // Unique identifier
+      "text": "Value 0",
+      "active": true, /* Status flag */
+      "tags": ["important", "first",],
+    },
+    // Entry 1
+    {
+      "id": 1,
+      "text": "Value 1",
+      "active": false,
+      "tags": ["secondary",],
+    },
+    /* Entry 2 with nested structure */
+    {
+      "id": 2,
+      "text": "Value 2",
+      "nested": {
+        "level": 1, // Nesting depth
+        "items": [10, 20, 30,],
+      },
+    },
+    // Entry 3
+    {
+      "id": 3,
+      "text": "Value 3",
+      "metadata": {
+        "priority": "high", /* Processing priority */
+        "category": "test",
+      },
+    },
+    /* Additional entries for size */
+    { "id": 4, "text": "Value 4", "count": 100, },
+    { "id": 5, "text": "Value 5", "count": 200, },
+    { "id": 6, "text": "Value 6", "count": 300, },
+    { "id": 7, "text": "Value 7", "count": 400, },
+    { "id": 8, "text": "Value 8", "count": 500, },
+    { "id": 9, "text": "Value 9", "count": 600, },
+    // More complex structures
+    {
+      "id": 10,
+      "complex": {
+        "array": [
+          {"x": 1, "y": 2,}, // Point 1
+          {"x": 3, "y": 4,}, // Point 2
+          {"x": 5, "y": 6,}, /* Point 3 */
+        ],
+        "matrix": [
+          [1, 2, 3,],
+          [4, 5, 6,],
+          [7, 8, 9,],
+        ],
+      },
+    },
+    /* Large text entry */
+    {
+      "id": 11,
+      "description": "This is a longer text field that contains multiple sentences. It demonstrates how JSONC handles larger string values with inline comments.",
+      "notes": "Additional notes go here with more detail about this particular entry.",
+    },
+    // Entries 12-20 for additional bulk
+    { "id": 12, "value": "Sample 12", "code": "A12", },
+    { "id": 13, "value": "Sample 13", "code": "A13", },
+    { "id": 14, "value": "Sample 14", "code": "A14", },
+    { "id": 15, "value": "Sample 15", "code": "A15", },
+    { "id": 16, "value": "Sample 16", "code": "A16", },
+    { "id": 17, "value": "Sample 17", "code": "A17", },
+    { "id": 18, "value": "Sample 18", "code": "A18", },
+    { "id": 19, "value": "Sample 19", "code": "A19", },
+    { "id": 20, "value": "Sample 20", "code": "A20", },
+  ],
+  /* Configuration section */
+  "config": {
+    "timeout": 5000, // Milliseconds
+    "retries": 3,
+    "debug": true, /* Enable debug mode */
+    "features": {
+      "caching": true,
+      "logging": true, // Enable request logging
+      "compression": false,
+    },
+  },
+  // Final summary data
+  "summary": {
+    "totalEntries": 21,
+    "lastUpdated": "2025-12-29T12:00:00Z", /* ISO timestamp */
+    "status": "active",
+  },
+}`,
+        'minified': `{"a":1,"b":[1,2,3,],"c":{"d":"test",}/* comment */}`,
+        'pretty-array': `[
+  // First item - a user object
+  {
+    "id": 1,
+    "name": "Alice Johnson",
+    "email": "alice@example.com", // Contact email
+    "roles": ["admin", "user",], /* Multiple roles allowed */
+  },
+  // Second item
+  {
+    "id": 2,
+    "name": "Bob Smith",
+    "email": "bob@example.com",
+    "roles": ["user",],
+  },
+  /* Third item with additional fields */
+  {
+    "id": 3,
+    "name": "Charlie Brown",
+    "email": "charlie@example.com",
+    "roles": ["moderator", "user",],
+    "active": true, // Account status
+  },
+]`,
+        'schema': `{
+  // JSON Schema for a User object
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "User", /* User entity schema */
+  "description": "Schema for user account data",
+  "required": ["id", "username", "email",], // Mandatory fields
+  "properties": {
+    "id": {
+      "type": "integer", // Unique identifier
+      "minimum": 1,
+    },
+    "username": {
+      "type": "string",
+      "minLength": 3, /* Minimum 3 characters */
+      "maxLength": 20,
+      "pattern": "^[a-zA-Z0-9_]+$", // Alphanumeric and underscore only
+    },
+    "email": {
+      "type": "string",
+      "format": "email", /* Must be valid email */
+    },
+    "age": {
+      "type": "integer",
+      "minimum": 13, // Minimum age requirement
+      "maximum": 120,
+    },
+    "roles": {
+      // Array of role strings
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["user", "admin", "moderator",], /* Allowed roles */
+      },
+      "uniqueItems": true,
+    },
+  },
+}`,
+        'commented-out': `{
+  "active": {
+    "feature1": true, // This feature is enabled
+    "feature2": false,
+    "feature3": true, /* Another active feature */
+  },
+  /* DISABLED SECTION - Remove this comment block to enable
+  "experimental": {
+    "beta": true,
+    "alpha": false,
+    "gamma": true,
+  },
+  */
+  "production": {
+    // Production settings
+    "timeout": 30000,
+    "maxConnections": 100, // Connection pool size
+    "cache": {
+      "enabled": true,
+      "ttl": 3600, /* Cache time-to-live in seconds */
+    },
+  },
+  "database": {
+    "host": "localhost", // DB host
+    "port": 5432,
+    "name": "myapp", /* Database name */
+    "pool": {
+      "min": 5,
+      "max": 20, // Maximum connections
+    },
+  },
+  /* TEMPORARILY DISABLED - Long configuration section
+  "monitoring": {
+    "enabled": true,
+    "services": [
+      {
+        "name": "prometheus",
+        "port": 9090,
+        "scrapeInterval": 15,
+      },
+      {
+        "name": "grafana",
+        "port": 3000,
+        "dashboards": ["system", "application", "database",],
+      },
+    ],
+    "alerts": {
+      "email": ["admin@example.com", "ops@example.com",],
+      "slack": {
+        "webhook": "https://hooks.slack.com/services/T00/B00/XX",
+        "channel": "#alerts",
+      },
+      "thresholds": {
+        "cpu": 80,
+        "memory": 90,
+        "disk": 85,
+      },
+    },
+    "logging": {
+      "level": "info",
+      "outputs": ["console", "file", "syslog",],
+      "rotation": {
+        "maxSize": "100MB",
+        "maxAge": "7d",
+        "maxBackups": 10,
+      },
+    },
+  },
+  */
+  "api": {
+    "version": "v1", // API version
+    "baseUrl": "/api/v1",
+    "rateLimit": {
+      "enabled": true, /* Rate limiting active */
+      "maxRequests": 100,
+      "windowMs": 60000, // 1 minute window
+    },
+  },
+}`,
+        'already-json': `{
+    "key1": 1,
+    "key2": "TWO"
+}`,
+    };
+
+    let jsoncToJson;
+    let buildVariant = 'js-and-wasm';
+
+    const loadBuild = async (variant) => {
+        const builds = {
+            'js-and-wasm': window.W4?.isDev
+                ? '../src/jsonc-to-json--js-and-wasm.js'
+                : './jsonc-to-json--js-and-wasm.js',
+            'js-only': window.W4?.isDev
+                ? '../src/jsonc-to-json--js-only.js'
+                : './jsonc-to-json--js-only.js',
+            'wasm-only': window.W4?.isDev
+                ? '../src/jsonc-to-json--wasm-only.js'
+                : './jsonc-to-json--wasm-only.js',
+            'js-and-wasm-min': window.W4?.isDev
+                ? null // dev mode only runs source code, so can't run minified
+                : './jsonc-to-json--js-and-wasm.min.js',
+            'js-only-min': window.W4?.isDev
+                ? null
+                : './jsonc-to-json--js-only.min.js',
+            'wasm-only-min': window.W4?.isDev
+                ? null
+                : './jsonc-to-json--wasm-only.min.js',
+        };
+        const module = await import(builds[variant]);
+        jsoncToJson = module.jsoncToJson;
+        buildVariant = variant;
+        updateUseWasmControls();
+    };
+
+    const updateUseWasmControls = () => {
+        const disabled = !buildVariant.startsWith('js-and-wasm');
+        const label = document.getElementById('useWasm-controls-label');
+        if (label) label.style.opacity = disabled ? '0.5' : '1';
+
+        document.querySelectorAll('input[name="wasm-mode"]').forEach((radio) => {
+            radio.disabled = disabled;
+        });
+    };
+
+    // Disable build variants that are not available in dev mode.
+    if (window.W4?.isDev) {
+        document.querySelectorAll('input[name="build-variant"]').forEach((radio) => {
+            if (radio.value.endsWith('-min')) {
+                radio.disabled = true;
+                radio.parentElement.style.opacity = '0.5';
+                radio.parentElement.style.cursor = 'not-allowed';
+            }
+        });
+    }
+
+    // Force build variant to default on page load (overrides browser cache).
+    document.querySelector('input[name="build-variant"][value="js-and-wasm"]').checked = true;
+
+    // Always start by loading the unminified JS-and-WASM build.
+    await loadBuild('js-and-wasm');
+
     const $input = document.getElementById('input');
     const $output = document.getElementById('output');
+    const $buildRadios = document.querySelectorAll('input[name="build-variant"]');
+    const $debugRadios = document.querySelectorAll('input[name="debug"]');
     const $modeRadios = document.querySelectorAll('input[name="wasm-mode"]');
+    const $presetButtons = document.querySelectorAll('#presets button[data-preset]');
+
+    let debug = true;
     let wasmMode = 'auto';
 
     const updateOutput = () => {
         try {
-            const json = jsoncToJson($input.innerText, { useWasm: wasmMode });
-            $output.innerText = json;
+            const output = jsoncToJson($input.innerText, { debug, useWasm: wasmMode });
+            if (!debug) {
+                $output.innerText = output;
+                return;
+            }
+            const { json } = output;
+            $output.innerText =
+                `- Build variant: ${output.buildVariant}\n` +
+                `- Implementation used: ${output.implementationUsed}\n` +
+                `- Input length: ${output.lengthInput} chars\n` +
+                `- Output length: ${output.lengthOutput} chars\n` +
+                `- Processing time: ${output.processingTimeMs} ms\n` +
+                `- Version: ${output.version}\n` +
+                `\n\n---\n\n${json}`;
         } catch (e) {
             $output.innerText = `Error: ${e.message}`;
         }
@@ -110,10 +469,35 @@ if (is) $body.appendChild(document.createElement('div')).id = 'w4-dev-badge';
     // input JSONC to the output JSON.
     updateOutput();
     $input.addEventListener('input', updateOutput);
+
+    $buildRadios.forEach((radio) => {
+        radio.addEventListener('change', async (event) => {
+            await loadBuild(event.target.value);
+            updateOutput();
+        });
+    });
+
+    $debugRadios.forEach((radio) => {
+        radio.addEventListener('change', (event) => {
+            debug = event.target.value === 'yes';
+            updateOutput();
+        });
+    });
+
     $modeRadios.forEach((radio) => {
         radio.addEventListener('change', (event) => {
             wasmMode = event.target.value;
             updateOutput();
+        });
+    });
+
+    $presetButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+            const presetName = button.getAttribute('data-preset');
+            if (presets[presetName]) {
+                $input.innerText = presets[presetName];
+                updateOutput();
+            }
         });
     });
 </script>

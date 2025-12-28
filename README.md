@@ -1,10 +1,11 @@
 # jsonc-to-json
 
-**Minimal transformer of JSONC to JSON, that strips comments and trailing commas**
+**Minimal transformer of JSONC to JSON — strips comments and trailing commas**
 
-- Version: 0.0.1
+- Version: 1.1.0
+- License: MIT
 - Created: 27th December 2025 by Rich Plastow
-- Updated: 27th December 2025 by Rich Plastow
+- Updated: 28th December 2025 by Rich Plastow
 - GitHub: <https://github.com/richplastow/jsonc-to-json>
 - Live demo: <https://richplastow.com/jsonc-to-json/>
 
@@ -13,13 +14,13 @@
 jsonc-to-json is a JavaScript library that transforms JSONC (JSON with Comments)
 into standard JSON by stripping comments and trailing commas.
 
-It switches to a Rust and WebAssembly (WASM) backend for large inputs (1000+
-chars) to improve performance, while keeping a pure JavaScript implementation
-for smaller inputs and environments where WASM is not available.
+It switches to a Rust and WebAssembly (WASM) implementation for large inputs
+(1000+ chars) to improve performance, while keeping a pure JavaScript
+implementation for smaller inputs and environments where WASM is not available.
 
 ## Programmatic Usage
 
-Your JSONC could come from anywhere, for example an example.jsonc file:
+Your JSONC could come from anywhere, e.g. an example.jsonc file:
 
 
 ```jsonc
@@ -82,7 +83,7 @@ You can also run jsonc-to-json from the command line:
 
 ```bash
 # Pass a JSONC string in to the dist/ script directly, and echo the output.
-node dist/jsonc-to-json.js '{/* comment */"key1":1,}'
+node dist/jsonc-to-json--js-and-wasm.js '{/* comment */"key1":1,}'
 # {"key1":1}
 
 # Or pipe JSONC from stdin.
@@ -92,8 +93,8 @@ cat example.jsonc | npx jsonc-to-json > example.json
 npx jsonc-to-json < example.jsonc > example.json
 
 # Or, after making the dist/ file executable, chain commands together.
-chmod +x dist/jsonc-to-json.js
-echo '{/* comment */"key2":"TWO",}' | ./dist/jsonc-to-json.js | jq '.key2'
+chmod +x dist/jsonc-to-json--js-and-wasm.js
+echo '{/* comment */"key2":"TWO",}' | ./dist/jsonc-to-json--js-and-wasm.js | jq '.key2'
 # "TWO"
 ```
 
@@ -129,7 +130,8 @@ You'll need to set up Rust and wasm-pack to complete the build process -
 [see below.](#set-up-the-rust-and-wasm-toolchain-and-install-wasm-pack)
 
 ```bash
-# Install the "@types/node" dev-dependency - ~3 MB for ~140 items.
+# Install the "@rollup/plugin-terser" and "@types/node" dev-dependencies,
+# ~7 MB for ~450 items.
 npm install
 # ...
 
@@ -156,10 +158,10 @@ npm run build
 # 
 # > jsonc-to-json@0.0.1 build
 # ...
-# src/jsonc-to-json.js → dist/jsonc-to-json.js...
-# created dist/jsonc-to-json.js in 29ms
-# src/jsonc-to-json.js → docs/jsonc-to-json.js...
-# created docs/jsonc-to-json.js in 9ms
+# src/jsonc-to-json--js-and-wasm.js → dist/jsonc-to-json--js-and-wasm.js...
+# created dist/jsonc-to-json--js-and-wasm.js in 29ms
+# src/jsonc-to-json--js-and-wasm.js → docs/jsonc-to-json--js-and-wasm.js...
+# created docs/jsonc-to-json--js-and-wasm.js in 9ms
 # ✅ Build succeeded!
 ```
 

@@ -1,5 +1,17 @@
 #!/usr/bin/env node
 /**
+ * @fileoverview
+ * Combined JS and WASM build of jsonc-to-json.
+ * 
+ * Minimal transformer of JSONC to JSON — strips comments and trailing commas.
+ * 
+ * - Version: 1.1.0
+ * - License: MIT
+ * - GitHub: <https://github.com/richplastow/jsonc-to-json>
+ * - Live demo: <https://richplastow.com/jsonc-to-json/>
+ */
+
+/**
  * Removes both line and block comments from a JSONC string while keeping
  * string literals intact and trimming inline whitespace before comments.
  * @param {string} input
@@ -441,8 +453,8 @@ function initSync(module) {
 }
 
 const wasmBase64 = 'AGFzbQEAAAABYA5gAn9/AX9gA39/fwF/YAJ/fwBgAAJ/f2ADf39/AGABfwBgAn9/An9/YAV/f39/fwF/YAR/f39/AX9gAABgAX8Bf2AFf39/f38AYAt/f39/f39/f39/fwF/YAR/f39/AAInAQN3YmcfX193YmluZGdlbl9pbml0X2V4dGVybnJlZl90YWJsZQAJA0RD'
-  + 'CgQABAcFBAQBAQECAAICAAcAAgsCDAQEAA0AAgUAAQAAAAICAAcAAAIGBgYGCAUFAgICAAQBAAgAAgACAAACAgAAAgQJAnABICBvAIABBQMBABEGCQF/AUGAgMAACwe/AQoGbWVtb3J5AgANanNvbmNfdG9fanNvbgArEnJlbW92ZV9ibGFua19saW5lcwAsFnJlbW92'
-  + 'ZV90cmFpbGluZ19jb21tYXMALQ5zdHJpcF9jb21tZW50cwAqFV9fd2JpbmRnZW5fZXh0ZXJucmVmcwEBEV9fd2JpbmRnZW5fbWFsbG9jACgSX193YmluZGdlbl9yZWFsbG9jAC4PX193YmluZGdlbl9mcmVlADUQX193YmluZGdlbl9zdGFydAAACSUBAEEBCx8wIiUn'
+  + 'CgQABAcFBAQBAQECAAICAAcAAgsCDAQEAA0AAgUAAQAAAAICAAcAAAIGBgYGCAUFAgICAAQBAAgAAgACAAACAgAAAgQJAnABICBvAIABBQMBABEGCQF/AUGAgMAACwe/AQoGbWVtb3J5AgANanNvbmNfdG9fanNvbgAtEnJlbW92ZV9ibGFua19saW5lcwAsFnJlbW92'
+  + 'ZV90cmFpbGluZ19jb21tYXMAKg5zdHJpcF9jb21tZW50cwArFV9fd2JpbmRnZW5fZXh0ZXJucmVmcwEBEV9fd2JpbmRnZW5fbWFsbG9jACgSX193YmluZGdlbl9yZWFsbG9jAC4PX193YmluZGdlbl9mcmVlADUQX193YmluZGdlbl9zdGFydAAACSUBAEEBCx8wIiUn'
   + 'HjAbIRwQMB8SPjkjOj8vGRMVQzIxQjc7CiBBDAEECtKoAUPJJQIJfwF+IwBBEGsiCCQAAkACQAJAAkACQCAAQfUBTwRAIABBzP97SwRAQQAhAAwGCyAAQQtqIgJBeHEhBUH8kMAAKAIAIglFDQRBHyEGQQAgBWshAyAAQfT//wdNBEAgBUEmIAJBCHZnIgBrdkEBcSAA'
   + 'QQF0a0E+aiEGCyAGQQJ0QeCNwABqKAIAIgJFBEBBACEADAILIAVBGSAGQQF2a0EAIAZBH0cbdCEEQQAhAANAAkAgAigCBEF4cSIHIAVJDQAgByAFayIHIANPDQAgAiEBIAciAw0AQQAhAyABIQAMBAsgAigCFCIHIAAgByACIARBHXZBBHFqKAIQIgJHGyAAIAcbIQAg'
   + 'BEEBdCEEIAINAAsMAQsCQAJAAkACQAJAQfiQwAAoAgAiBEEQIABBC2pB+ANxIABBC0kbIgVBA3YiAHYiAUEDcQRAIAFBf3NBAXEgAGoiB0EDdCIBQfCOwABqIgAgAUH4jsAAaigCACICKAIIIgNGDQEgAyAANgIMIAAgAzYCCAwCCyAFQYCRwAAoAgBNDQggAQ0CQfyQ'
@@ -573,11 +585,11 @@ const wasmBase64 = 'AGFzbQEAAAABYA5gAn9/AX9gA39/fwF/YAJ/fwBgAAJ/f2ADf39/AGABfwBg
   + 'IQANAAsgAUG0iMAAQQIgAiADakEQakEAIAJrEAUgA0EQaiQADwtBACECIwBBEGsiAyQAIAAoAgAhAANAIAIgA2pBD2ogAEEPcS0A/olAOgAAIAJBAWshAiAAQQ9LIABBBHYhAA0ACyABQbSIwABBAiACIANqQRBqQQAgAmsQBSADQRBqJAALIgACQCAAIAEQNEUNACAA'
   + 'BEAgACABED0iAUUNAQsgAQ8LAAv6AQICfwF+IwBBEGsiAiQAIAJBATsBDCACIAE2AgggAiAANgIEIwBBEGsiASQAIAJBBGoiACkCACEEIAEgADYCDCABIAQ3AgQjAEEQayIAJAAgAUEEaiIBKAIAIgIoAgwhAwJAAkACQAJAIAIoAgQOAgABAgsgAw0BQQEhAkEAIQMM'
   + 'AgsgAw0AIAIoAgAiAigCBCEDIAIoAgAhAgwBCyAAQYCAgIB4NgIAIAAgATYCDCAAQcSGwAAgASgCBCABKAIIIgAtAAggAC0ACRAUAAsgACADNgIEIAAgAjYCACAAQaiGwAAgASgCBCABKAIIIgAtAAggAC0ACRAUAAufAQEFfyMAQRBrIgIkACMAQRBrIgMkACADQQRq'
-  + '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'
+  + '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'
@@ -661,12 +673,25 @@ const getWasmApi = () => {
   };
 };
 
-const DEFAULT_WASM_THRESHOLD = 1000;
+const BUILD_VARIANT = 'js-and-wasm'; // may have ".min" appended during build
+const PACKAGE_VERSION = '1.1.0'; // will be checked during build
+const WASM_THRESHOLD = 1000;
 
 /**
  * @typedef {Object} JsoncToJsonOptions
- * @property {'always'|'auto'|'never'} [useWasm]
- * @property {(impl: 'wasm'|'js') => void} [onImplementationUsed] - Testing hook
+ * @property {boolean} [debug] - Optional debug flag, false by default
+ * @property {'always'|'auto'|'never'} [useWasm] - When to use WASM
+ */
+
+/**
+ * @typedef {Object} JsoncToJsonDebugOutput
+ * @property {string} buildVariant - The build variant used, e.g. 'js-only.min'
+ * @property {'js'|'wasm'} implementationUsed - Whether JavaScript or WASM was used to process this JSON output
+ * @property {number} lengthInput - The length of the input JSONC string
+ * @property {number} lengthOutput - The length of the output JSON string
+ * @property {string} json - The JSON output, with comments and trailing commas removed
+ * @property {string} processingTimeMs - Time taken to process the input, in milliseconds, to 3 fixed decimal places
+ * @property {string} version - The jsonc-to-json package version
  */
 
 /**
@@ -674,30 +699,46 @@ const DEFAULT_WASM_THRESHOLD = 1000;
  * removing trailing commas, and collapsing blank lines.
  * @param {string} jsoncString
  * @param {JsoncToJsonOptions} [options]
- * @returns {string}
+ * @returns {string|JsoncToJsonDebugOutput}
  */
 const jsoncToJson = (jsoncString, options = {}) => {
-    const mode = normalizeUseWasm(options.useWasm);
+    let startTime;
+    if (options.debug) startTime = performance.now();
+
+    const useWasm = normalizeUseWasm(options.useWasm);
     const shouldUseWasm =
-        mode === 'always'
+        useWasm === 'always'
             || (
-                mode === 'auto'
+                useWasm === 'auto'
                 && typeof jsoncString === 'string'
-                && jsoncString.length >= DEFAULT_WASM_THRESHOLD
+                && jsoncString.length >= WASM_THRESHOLD
             );
 
+    let json;
     if (shouldUseWasm) {
         const wasm = getWasmApi();
         if (wasm) {
-            options.onImplementationUsed?.('wasm');
-            return wasm.jsoncToJson(jsoncString);
-        }
-        if (mode === 'always') throw new Error(
+            json = wasm.jsoncToJson(jsoncString);
+        } else if (useWasm === 'always') throw new Error(
             'Rust WASM backend was requested but is unavailable. Rebuild the wasm package to enable it.');
+    } else {
+        json = runJavaScriptPipeline(jsoncString);
     }
 
-    options.onImplementationUsed?.('js');
-    return runJavaScriptPipeline(jsoncString);
+    // Usually, return just the JSON output.
+    if (!options.debug) return json;
+
+    // In debug mode, return runtime info along with the JSON output.
+    const processingTimeMs = performance.now() - startTime;
+    return {
+        buildVariant: BUILD_VARIANT,
+        implementationUsed: shouldUseWasm ? 'wasm' : 'js',
+        json,
+        lengthInput: jsoncString.length,
+        lengthOutput: json.length,
+        processingTimeMs: processingTimeMs.toFixed(3),
+        version: PACKAGE_VERSION,
+    };
 };
 
 const runJavaScriptPipeline = (input) => {
@@ -707,16 +748,20 @@ const runJavaScriptPipeline = (input) => {
 };
 
 const normalizeUseWasm = (value) => {
-    if (value === 'always' || value === 'auto' || value === 'never') {
-        return value;
+    switch (value) {
+        case 'always':
+        case 'auto':
+        case 'never':
+            return value;
+        default:
+            return 'auto';
     }
-    return 'auto';
 };
 
 // CLI functionality - check if this module is being run from the command line.
 if (typeof process === 'object' && Array.isArray(process.argv)) {
     const [, executablePath, jsoncPath] = process.argv;
-    if (executablePath && executablePath.endsWith('jsonc-to-json.js')) {
+    if (executablePath && executablePath.endsWith('jsonc-to-json--js-and-wasm.js')) {
         if (jsoncPath) { // process the argument as a JSONC string
             const jsonContent = jsoncToJson(jsoncPath);
             console.log(jsonContent);

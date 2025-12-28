@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="style.css">
 
     <!-- Search engine meta -->
-    <title>jsonc-to-json — browser benchmarks</title>
+    <title>jsonc-to-json v1.1.0 — browser benchmarks</title>
     <meta name="description"
         content="Runs a side-by-side comparison of the JavaScript and Rust/WASM
         implementations in the current browser, for trivial, small, large and
@@ -25,7 +25,7 @@
         content="https://richplastow.com/jsonc-to-json/bench.html">
     <meta property="og:image"
         content="https://richplastow.com/asset/logo/rich-plastow-logo-1200.png">
-    <meta property="og:title" content="jsonc-to-json — browser benchmarks">
+    <meta property="og:title" content="jsonc-to-json v1.1.0 — browser benchmarks">
     <meta property="og:description"
         content="Runs a side-by-side comparison of the JavaScript and Rust/WASM
         implementations in the current browser, for trivial, small, large and
@@ -46,13 +46,13 @@
 </head>
 <body>
 <header>
-    <h1>jsonc-to-json — browser benchmark</h1>
+    <h1>jsonc-to-json v1.1.0 — browser benchmarks</h1>
     <p>Runs a side-by-side comparison of the JavaScript and Rust/WASM
         implementations in the current browser, for trivial, small, large and
         huge inputs. Useful for exploring performance differences between real
         browser engines, for different jsonc-to-json releases.</p>
     <p><a href="./index.html">Back to the live demo</a></p>
-    <p><a href="./bench-1.0.0.html">Node.js benchmarks</a></p>
+    <p><a href="./bench-1.1.0.html">Latest Node.js benchmarks</a></p>
 </header>
 <section id="controls">
     <button id="run-bench">Run benchmarks</button>
@@ -93,8 +93,8 @@ if (is) $body.appendChild(document.createElement('div')).id = 'w4-dev-badge';
 
 <script type="module">
     const { jsoncToJson } = window.W4?.isDev
-        ? await import('../src/jsonc-to-json.js')
-        : await import('./jsonc-to-json.js');
+        ? await import('../src/jsonc-to-json--js-and-wasm.js')
+        : await import('./jsonc-to-json--js-and-wasm.js');
 
     const DATASETS = [
         { id: 'trivial', label: 'Trivial (single entry)', entries: 1, iterations: 5000 },
